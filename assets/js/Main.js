@@ -42,10 +42,6 @@ class Personaje{
         this.secondAttack=secondAttack;
     }
 
-    recibirDaño(daño){
-        this.currentHealth-=daño;
-    }
-
     atacar(personajeObjetivo){
         const ataques=[this.firstAttack, this.secondAttack];
         const ataqueElegido= ataques[Math.floor(Math.random() * ataques.length)];
@@ -101,7 +97,7 @@ class Combate{
         this.p1=p1;
         this.p2=p2;
         this.combateActivo=true;
-        
+        this.log="";
 
     }
 
@@ -149,7 +145,7 @@ class Combate{
             —------------------------------------------------------------------------------------------------------------------------`);
 
         
-        console.log("logs \n"+ log)
+        console.log("logs \n"+ this.log)
         
     }
     
@@ -171,8 +167,10 @@ class Combate{
 
     
     realizarAtaques(personajeAtacante,personajeObjetivo){
-        this.log +="\n"+ personajeAtacante.atacar(personajeObjetivo); 
-        this.log +="\n"+ personajeObjetivo.atacar(personajeAtacante);
+        this.log +="\n"+ personajeAtacante.atacar(personajeObjetivo);
+        if(!personajeObjetivo.estaDerrotado()){
+            this.log +="\n"+ personajeObjetivo.atacar(personajeAtacante);
+        }
     }
 
     resolucion(){
