@@ -8,6 +8,7 @@ class Personaje{
         this.currentHealth=this.health;
         this.speed=Math.floor(Math.random()*10) +1;
         this.pickAttacks();
+        this.contadorFallos=0;
     }
     //OBTENER CLASE ALETORIA
     obtenerClase(){
@@ -67,8 +68,9 @@ class Personaje{
             return resultado;}
         
         }else{
-            resultado=`${this.name} ataca con ${ataqueElegido}…  Falla!. La vida de ${personajeObjetivo.name} se mantiene en ${personajeObjetivo.currentHealth}.\n`;
+            resultado=`${this.name} ataca con ${ataqueElegido.name}…  Falla!. La vida de ${personajeObjetivo.name} se mantiene en ${personajeObjetivo.currentHealth}.\n`;
             console.log(resultado);
+            this.contadorFallos+=1;
             return resultado;
         }
     }
@@ -122,6 +124,7 @@ class Combate{
         this.p1=p1;
         this.p2=p2;
         this.combateActivo=true;
+        
 
     }
 
@@ -139,10 +142,12 @@ class Combate{
         let N = 0;             //Número del turno
         let HEALTH_1       //Vida actual del personaje 1 en el turno posterior al ataque del personaje 2
         let HEALTH_2       //Vida actual del personaje 2 en el turno posterior al ataque del personaje 1
-        let N_FALLOS_1=0;    //Cantidad de ataques fallados en la batalla por parte del personaje 1
-        let N_FALLOS_2=0;     //Cantidad de ataques fallados en la batalla por parte del personaje 2
+        let N_FALLOS_1= 0;    //Cantidad de ataques fallados en la batalla por parte del personaje 1
+        let N_FALLOS_2= 0;     //Cantidad de ataques fallados en la batalla por parte del personaje 2
         let log;
 
+
+        //mensaje inicio
         console.log("### INICIO ###\n"+
         `
         ${Personaje_1} | ${this.p1.classType} | ${this.p1.health} de vida\n
@@ -152,19 +157,22 @@ class Combate{
 
 
         
+        //ciclo del combate
         while(this.combateActivo){
             this.resolucion();
             this.ganador=this.comprobarFinCombate();
         }
 
+        //mensaje final de resumen
         console.log("\n### RESUMEN ###\n"+
         `\n${this.ganador} gana la batalla!
             
-            ${this.p1.name} falló ${this.N_FALLOS_1} veces su ataque\n
-            ${this.p2.name} falló ${this.N_FALLOS_1} veces su ataque\n
+            ${this.p1.name} falló ${this.p1.contadorFallos} veces su ataque\n
+            ${this.p2.name} falló ${this.p2.contadorFallos} veces su ataque\n
             —------------------------------------------------------------------------------------------------------------------------`);
 
         
+        console.log("logs \n"+ log)
         
     }
     
@@ -186,8 +194,8 @@ class Combate{
 
     
     realizarAtaques(personajeAtacante,personajeObjetivo){
-        personajeAtacante.atacar(personajeObjetivo);
-        personajeObjetivo.atacar(personajeAtacante);
+        this.log +="\n"+ personajeAtacante.atacar(personajeObjetivo); 
+        this.log +="\n"+ personajeObjetivo.atacar(personajeAtacante);
     }
 
     resolucion(){
@@ -215,10 +223,10 @@ class Combate{
     comprobarFinCombate(){
         if(p1.estaDerrotado()){
             this.combateActivo=false;
-            return p2
+            return p2.name
         }else if(p2.estaDerrotado()){
             this.combateActivo=false;
-            return p1
+            return p1.name
         }
         }
 }
