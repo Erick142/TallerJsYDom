@@ -52,17 +52,14 @@ class Personaje{
             let salud= personajeObjetivo.currentHealth;
             if(salud>0){
             resultado = `${this.name} ataca con ${ataqueElegido.name}…  Da en el blanco!. La vida de ${personajeObjetivo.name} queda en ${personajeObjetivo.currentHealth}.\n`;
-            console.log(resultado);
             return resultado;
 
             }else{
             resultado = `${this.name} ataca con ${ataqueElegido.name}…  Da en el blanco!. ${personajeObjetivo.name} no puede continuar.\n`;
-            console.log(resultado);
             return resultado;}
         
         }else{
             resultado=`${this.name} ataca con ${ataqueElegido.name}…  Falla!. La vida de ${personajeObjetivo.name} se mantiene en ${personajeObjetivo.currentHealth}.\n`;
-            console.log(resultado);
             this.contadorFallos+=1;
             return resultado;
         }
@@ -107,19 +104,6 @@ class Combate{
         //console.log(Personaje_1);
         let Personaje_2 = this.p2.name   //Nombre del personaje 1
         //console.log(Personaje_2);
-
-        let ganador;
-
-        let ATACK_NAME_1   //Nombre del ataque usado por el personaje 1 en el turno
-        let ATACK_NAME_2   //Nombre del ataque usado por el personaje 2 en el turno
-        let N = 0;             //Número del turno
-        let HEALTH_1       //Vida actual del personaje 1 en el turno posterior al ataque del personaje 2
-        let HEALTH_2       //Vida actual del personaje 2 en el turno posterior al ataque del personaje 1
-        let N_FALLOS_1= 0;    //Cantidad de ataques fallados en la batalla por parte del personaje 1
-        let N_FALLOS_2= 0;     //Cantidad de ataques fallados en la batalla por parte del personaje 2
-        let log;
-
-
         //mensaje inicio
 
         let mensajeInicio = `### INICIO ###\n
@@ -128,14 +112,10 @@ class Combate{
         V/S\n
         ${Personaje_2} | ${this.p2.classType} | ${this.p2.health} de vida\n
         `;
-
-        console.log(mensajeInicio);
-
-        
         //ciclo del combate
+        this.logBatalla="\n";
         while(this.combateActivo){
             this.turno++
-            console.log("TURNO "+this.turno)
             
             this.resolucion(this.turno);
             this.ganador=this.comprobarFinCombate();
@@ -149,13 +129,11 @@ class Combate{
             ${this.p2.name} falló ${this.p2.contadorFallos} veces su ataque\n
             —------------------------------------------------------------------------------------------------------------------------`;
 
-            console.log(mensajeFinal);
 
-        
+    
+        this.log=mensajeInicio+this.logBatalla+mensajeFinal;
 
-        this.log+=mensajeInicio+this.logBatalla+mensajeFinal;
         console.log(this.log)
-
         this.generateFileLog(this.log, "resultados")
 
         
@@ -172,14 +150,14 @@ class Combate{
     
     
     realizarAtaques(personajeAtacante,personajeObjetivo){
-        this.log +="\n"+ personajeAtacante.atacar(personajeObjetivo);
+        this.logBatalla += personajeAtacante.atacar(personajeObjetivo);
         if(!personajeObjetivo.estaDerrotado()){
-            this.log +="\n"+ personajeObjetivo.atacar(personajeAtacante);
+            this.logBatalla +=personajeObjetivo.atacar(personajeAtacante);
         }
     }
 
     resolucion(turno){
-        this.logBatalla+= "TURNO "+turno+"\n"
+        this.logBatalla+="TURNO "+turno+"\n";
         if(this.p1.speed>this.p2.speed){
             //console.log("comienza p1")
             this.realizarAtaques(p1,p2);
@@ -196,7 +174,8 @@ class Combate{
                 this.realizarAtaques(p2,p1);
                 //console.log("comienza p2")
             }
-        }        
+        }
+        this.logBatalla+="\n"; 
     }
 
     
