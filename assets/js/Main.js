@@ -1,3 +1,5 @@
+const res = require("express/lib/response");
+
 class Personaje{
     constructor(name){
         this.name=name;
@@ -33,7 +35,7 @@ class Personaje{
         const posiblesAtaques= attacks.filter(ataque=>ataque.type==attackType);
         const firstAttack=posiblesAtaques[Math.floor(Math.random() * posiblesAtaques.length)];
         var secondAttack=posiblesAtaques[Math.floor(Math.random() * posiblesAtaques.length)];
-        //WHILE PO SI SALEN LOS MISMOS ATAQUES REPETIDOS.
+        //WHILE POR SI SALEN LOS MISMOS ATAQUES REPETIDOS.
         while(firstAttack==secondAttack){
             secondAttack=posiblesAtaques[Math.floor(Math.random() * posiblesAtaques.length)];
         }
@@ -44,15 +46,34 @@ class Personaje{
     recibirDaño(daño){
         this.currentHealth-=daño;
     }
+
     atacar(personajeObjetivo){
         const ataques=[this.firstAttack, this.secondAttack];
         const ataqueElegido= ataques[Math.floor(Math.random() * ataques.length)];
+        //console.log("acc "+ataqueElegido.accuracy);
         const elAtaqueAcerto=this.acertarAtaque(ataqueElegido);
+        //console.log(elAtaqueAcerto)
+        let resultado;
         if(elAtaqueAcerto){
-            personajeObjetivo.currentHealth-=ataqueElegido.damage;
+            personajeObjetivo.currentHealth-=ataqueElegido.damage
+            let salud= personajeObjetivo.currentHealth;
+            if(salud>0){
+            resultado = `${this.name} ataca con ${ataqueElegido.name}…  Da en el blanco!. La vida de ${personajeObjetivo.name} queda en ${personajeObjetivo.currentHealth}.\n`;
+            console.log(resultado);
+
+            }else{
+            resultado = `${this.name} ataca con ${ataqueElegido.name}…  Da en el blanco!. ${personajeObjetivo.name} no puede continuar.\n`;
+            console.log(resultado);
+            return resultado;}
+        
+        }else{
+            resultado=`${this.name} ataca con ${ataqueElegido}…  Falla!. La vida de ${personajeObjetivo.name} se mantiene en ${personajeObjetivo.currentHealth}.\n`;
+            console.log(resultado);
+            return resultado;
         }
-        return elAtaqueAcerto;
     }
+    
+
     acertarAtaque(ataque){
         const precision = Math.floor(Math.random() * 100) + 1;
         if (precision <= ataque.accuracy) {
@@ -61,8 +82,12 @@ class Personaje{
             return false; // El ataque falló
         }
     }
+
+
     estaDerrotado(){
-        return this.currentHealth<=0;
+        if (this.currentHealth<=0) {
+            return true
+        }else{return false} 
     }
     
 }
@@ -97,25 +122,53 @@ class Combate{
         this.p1=p1;
         this.p2=p2;
         this.combateActivo=true;
+
     }
 
 
-    function (p1,p2) {
-        let Personaje_1 = p1.name  //Nombre del personaje 1
-        let Personaje_2 = p2.name   //Nombre del personaje 1
+    combatir(p1,p2) {
+        let Personaje_1 = this.p1.name  //Nombre del personaje 1
+        console.log(Personaje_1);
+        let Personaje_2 = this.p2.name   //Nombre del personaje 1
+        console.log(Personaje_2);
+
+        let ganador;
+
         let ATACK_NAME_1   //Nombre del ataque usado por el personaje 1 en el turno
         let ATACK_NAME_2   //Nombre del ataque usado por el personaje 2 en el turno
         let N = 0;             //Número del turno
         let HEALTH_1       //Vida actual del personaje 1 en el turno posterior al ataque del personaje 2
         let HEALTH_2       //Vida actual del personaje 2 en el turno posterior al ataque del personaje 1
-        let N_FALLOS_1     //Cantidad de ataques fallados en la batalla por parte del personaje 1
-        let N_FALLOS_2     //Cantidad de ataques fallados en la batalla por parte del personaje 2
+        let N_FALLOS_1=0;    //Cantidad de ataques fallados en la batalla por parte del personaje 1
+        let N_FALLOS_2=0;     //Cantidad de ataques fallados en la batalla por parte del personaje 2
+        let log;
+
+        console.log("### INICIO ###\n"+
+        `
+        ${Personaje_1} | ${this.p1.classType} | ${this.p1.health} de vida\n
+        V/S\n
+        ${Personaje_2} | ${this.p2.classType} | ${this.p2.health} de vida\n
+        `);
+
 
         
+        while(this.combateActivo){
+            this.resolucion();
+            this.ganador=this.comprobarFinCombate();
+        }
 
+        console.log("\n### RESUMEN ###\n"+
+        `\n${this.ganador} gana la batalla!
+            
+            ${this.p1.name} falló ${this.N_FALLOS_1} veces su ataque\n
+            ${this.p2.name} falló ${this.N_FALLOS_1} veces su ataque\n
+            —------------------------------------------------------------------------------------------------------------------------`);
 
+        
+        
     }
     
+
     //crea un log del combate
     generateFileLog(logs, filename) {
         const fs = require("fs");
@@ -124,58 +177,73 @@ class Combate{
         });
     }
 
-    pasarTurno(){
-        this.turno++;
+    
+    pasarTurno(N){
+        N+=1;
     }
 
-    alguienFueDerrotado(){
-        if(this.p1.estaDerrotado()||this.p2.estaDerrotado()){
-            this.combateActivo=false;
-        }
+    
+
+    
+    realizarAtaques(personajeAtacante,personajeObjetivo){
+        personajeAtacante.atacar(personajeObjetivo);
+        personajeObjetivo.atacar(personajeAtacante);
     }
 
     resolucion(){
         if(this.p1.speed>this.p2.speed){
+            //console.log("comienza p1")
             this.realizarAtaques(p1,p2);
         }else if(this.p2.speed>this.p1.speed){
+            //console.log("comienza p2")
             this.realizarAtaques(p2,p1);
         }else{
+            //en caso de que tengan misma speed
             const primeroEnAtacar=Math.floor(Math.random*2)+1;
             if (primeroEnAtacar==1){
                 this.realizarAtaques(p1,p2);
+                //console.log("comienza p1")
             }else{
                 this.realizarAtaques(p2,p1);
+                //console.log("comienza p2")
             }
         }
     }
-    realizarAtaques(personajeRapido,personajeLento){
-        console.log(`${personajeRapido.name} ataca a ${personajeLento.name}`)
-        personajeRapido.atacar(personajeLento);
-        if(!personajeLento.estaDerrotado()){
-            personajeLento.atacar(personajeRapido);
-            console.log(`${personajeLento.name} ataca a ${personajeRapido.name}`)
-        }else{
-            console.log(personajeLento.name+ "derrotado")
+
+    
+
+    comprobarFinCombate(){
+        if(p1.estaDerrotado()){
+            this.combateActivo=false;
+            return p2
+        }else if(p2.estaDerrotado()){
+            this.combateActivo=false;
+            return p1
         }
-        if(personajeRapido.estaDerrotado()){
-            console.log(personajeRapido.name+" derrotado")
         }
-    }
 }
 
 
+
+
+
+
+//creacion de personajes
 const p1= new Personaje("Erick");
 const p2= new Personaje("Jorge");
 
-console.log(p1);
-console.log(p2);
+//console.log(p1);
+//console.log(p2);
+
+//comienzo combate
 const combate=new Combate(p1,p2);
 
+combate.combatir();
+
+/*
 while(combate.combateActivo){
-    combate.resolucion();
-    combate.pasarTurno();
-    combate.alguienFueDerrotado();
-}
+    combate.combatir();
+}*/
 
 
 
