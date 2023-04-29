@@ -96,8 +96,7 @@ class Combate{
         this.p1=p1;
         this.p2=p2;
         this.combateActivo=true;
-
-        this.logBatalla;
+        this.logBatalla = "";
 
     }
 
@@ -117,16 +116,16 @@ class Combate{
         let HEALTH_2       //Vida actual del personaje 2 en el turno posterior al ataque del personaje 1
         let N_FALLOS_1= 0;    //Cantidad de ataques fallados en la batalla por parte del personaje 1
         let N_FALLOS_2= 0;     //Cantidad de ataques fallados en la batalla por parte del personaje 2
-        let log;
+       
 
 
         //mensaje inicio
 
-        let mensajeInicio = `\n### INICIO ###\n
-        
-        ${Personaje_1} | ${this.p1.classType} | ${this.p1.health} de vida\n
-        V/S\n
-        ${Personaje_2} | ${this.p2.classType} | ${this.p2.health} de vida\n
+        let mensajeInicio = "";
+        mensajeInicio= "\n### INICIO ###"+
+        `\n${Personaje_1} | ${this.p1.classType} | ${this.p1.health} de vida\n
+        V/S
+        \n${Personaje_2} | ${this.p2.classType} | ${this.p2.health} de vida
         `;
 
         console.log(mensajeInicio);
@@ -142,7 +141,9 @@ class Combate{
         }
 
         //mensaje final de resumen
-        let mensajeFinal=`\n### RESUMEN ###\n
+        let mensajeFinal="";
+        
+        mensajeFinal +=`\n### RESUMEN ###\n
         ${this.ganador} gana la batalla!
             
             ${this.p1.name} falló ${this.p1.contadorFallos} veces su ataque\n
@@ -152,7 +153,7 @@ class Combate{
             console.log(mensajeFinal);
 
         
-
+        
         this.log+=mensajeInicio+this.logBatalla+mensajeFinal;
         console.log(this.log)
 
@@ -172,14 +173,14 @@ class Combate{
     
     
     realizarAtaques(personajeAtacante,personajeObjetivo){
-        this.log +="\n"+ personajeAtacante.atacar(personajeObjetivo);
+        this.logBatalla +="\n"+ personajeAtacante.atacar(personajeObjetivo);
         if(!personajeObjetivo.estaDerrotado()){
-            this.log +="\n"+ personajeObjetivo.atacar(personajeAtacante);
+            this.logBatalla +="\n"+ personajeObjetivo.atacar(personajeAtacante);
         }
     }
 
     resolucion(turno){
-        this.logBatalla+= "TURNO "+turno+"\n"
+        this.logBatalla+="\nTURNO "+turno
         if(this.p1.speed>this.p2.speed){
             //console.log("comienza p1")
             this.realizarAtaques(p1,p2);
