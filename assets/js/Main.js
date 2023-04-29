@@ -1,5 +1,3 @@
-const res = require("express/lib/response");
-
 class Personaje{
     constructor(name){
         this.name=name;
@@ -67,7 +65,7 @@ class Personaje{
             return resultado;}
         
         }else{
-            resultado=`${this.name} ataca con ${ataqueElegido}…  Falla!. La vida de ${personajeObjetivo.name} se mantiene en ${personajeObjetivo.currentHealth}.\n`;
+            resultado=`${this.name} ataca con ${ataqueElegido.name}…  Falla!. La vida de ${personajeObjetivo.name} se mantiene en ${personajeObjetivo.currentHealth}.\n`;
             console.log(resultado);
             return resultado;
         }
@@ -158,7 +156,7 @@ class Combate{
         }
 
         console.log("\n### RESUMEN ###\n"+
-        `\n${this.ganador} gana la batalla!
+        `\n${this.ganador.name} gana la batalla!
             
             ${this.p1.name} falló ${this.N_FALLOS_1} veces su ataque\n
             ${this.p2.name} falló ${this.N_FALLOS_1} veces su ataque\n
