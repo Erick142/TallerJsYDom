@@ -1,5 +1,3 @@
-const res = require("express/lib/response");
-
 class Personaje{
     constructor(name){
         this.name=name;
@@ -42,10 +40,6 @@ class Personaje{
         }
         this.firstAttack=firstAttack;
         this.secondAttack=secondAttack;
-    }
-
-    recibirDaño(daño){
-        this.currentHealth-=daño;
     }
 
     atacar(personajeObjetivo){
@@ -93,28 +87,7 @@ class Personaje{
     
 }
 
-const attacks=[
-    { "name": "Thunderstorm", "damage": 30, "accuracy": 60, "type": "MAGIC" },
-    { "name": "Earthquake", "damage": 12, "accuracy": 50, "type": "MAGIC" },
-    { "name": "Fist Punch", "damage": 18, "accuracy": 95, "type": "PHYSICAL" },
-    { "name": "Poison Cloud", "damage": 15, "accuracy": 80, "type": "MAGIC" },
-    { "name": "Hurricane", "damage": 22, "accuracy": 65, "type": "MAGIC" },
-    { "name": "Frost Nova", "damage": 10, "accuracy": 40, "type": "MAGIC" },
-    {"name": "Fist Uppercut","damage": 12,"accuracy": 100,"type": "PHYSICAL"},
-    { "name": "Divine Smite", "damage": 28, "accuracy": 90, "type": "MAGIC" },
-    { "name": "Sword Thrust", "damage": 20, "accuracy": 85, "type": "PHYSICAL" },
-    { "name": "Flame Burst", "damage": 18, "accuracy": 95, "type": "MAGIC" },
-    { "name": "Arcane Blast", "damage": 25, "accuracy": 70, "type": "MAGIC" },
-    { "name": "Sword Stab", "damage": 30, "accuracy": 60, "type": "PHYSICAL" },
-    { "name": "Kick Sweep", "damage": 10, "accuracy": 40, "type": "PHYSICAL" },
-    { "name": "Kick Strike", "damage": 22, "accuracy": 75, "type": "PHYSICAL" },
-    { "name": "Sword Slash", "damage": 25, "accuracy": 80, "type": "PHYSICAL" },
-    { "name": "Mind Blast", "damage": 8, "accuracy": 100, "type": "MAGIC" },
-    { "name": "Shadow Bolt", "damage": 20, "accuracy": 85, "type": "MAGIC" },
-    { "name": "Sword Cleave", "damage": 8, "accuracy": 70, "type": "PHYSICAL" },
-    { "name": "Kick Combo", "damage": 28, "accuracy": 65, "type": "PHYSICAL" },
-    { "name": "Fist Smash", "damage": 15, "accuracy": 90, "type": "PHYSICAL" }
-]
+const attacks=require("../../attacks.json");
 
 class Combate{
 
@@ -123,6 +96,7 @@ class Combate{
         this.p1=p1;
         this.p2=p2;
         this.combateActivo=true;
+
         this.logBatalla;
 
     }
@@ -178,6 +152,7 @@ class Combate{
             console.log(mensajeFinal);
 
         
+
         this.log+=mensajeInicio+this.logBatalla+mensajeFinal;
         console.log(this.log)
 
@@ -197,8 +172,10 @@ class Combate{
     
     
     realizarAtaques(personajeAtacante,personajeObjetivo){
-        this.logBatalla += personajeAtacante.atacar(personajeObjetivo)+"\n"; 
-        this.logBatalla += personajeObjetivo.atacar(personajeAtacante)+"\n";
+        this.log +="\n"+ personajeAtacante.atacar(personajeObjetivo);
+        if(!personajeObjetivo.estaDerrotado()){
+            this.log +="\n"+ personajeObjetivo.atacar(personajeAtacante);
+        }
     }
 
     resolucion(turno){
