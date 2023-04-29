@@ -148,7 +148,7 @@ class Combate{
 
         //mensaje inicio
 
-        let mensajeInicio = `### INICIO ###\n
+        let mensajeInicio = `\n### INICIO ###\n
         
         ${Personaje_1} | ${this.p1.classType} | ${this.p1.health} de vida\n
         V/S\n
