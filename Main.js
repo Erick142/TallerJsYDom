@@ -131,7 +131,7 @@ class Combate{
     
         this.log=mensajeInicio+this.logBatalla+mensajeFinal;
 
-        this.generateFileLog(this.log, "resultados")
+        this.generateFileLog(this.log, "resultados.txt")
 
         
     }
