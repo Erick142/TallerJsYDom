@@ -8,7 +8,7 @@ class Personaje{
         this.pickAttacks();
         this.contadorFallos=0;
     }
-    //OBTENER CLASE ALETORIA
+    //OBTENER CLASE ALEATORIA
     obtenerClase(){
         const clases=["MAGICIAN","KNIGHT","WARRIOR","FAIRY"];
         return  clases[Math.floor(Math.random() * clases.length)];
@@ -84,7 +84,10 @@ class Personaje{
     
 }
 
-const attacks=require("../../attacks.json");
+const attacks=require("./attacks.json");
+
+
+
 
 class Combate{
 
@@ -93,19 +96,15 @@ class Combate{
         this.p1=p1;
         this.p2=p2;
         this.combateActivo=true;
-
-        this.logBatalla;
+        this.log="";
+        this.logBatalla="\n";
 
     }
 
 
     combatir(p1,p2) {
-        let Personaje_1 = this.p1.name  //Nombre del personaje 1
-        //console.log(Personaje_1);
-        let Personaje_2 = this.p2.name   //Nombre del personaje 1
-        //console.log(Personaje_2);
-        //mensaje inicio
-
+        let Personaje_1 = this.p1.name  
+        let Personaje_2 = this.p2.name 
         let mensajeInicio = `### INICIO ###\n
         
         ${Personaje_1} | ${this.p1.classType} | ${this.p1.health} de vida\n
@@ -113,7 +112,6 @@ class Combate{
         ${Personaje_2} | ${this.p2.classType} | ${this.p2.health} de vida\n
         `;
         //ciclo del combate
-        this.logBatalla="\n";
         while(this.combateActivo){
             this.turno++
             
@@ -133,7 +131,6 @@ class Combate{
     
         this.log=mensajeInicio+this.logBatalla+mensajeFinal;
 
-        console.log(this.log)
         this.generateFileLog(this.log, "resultados")
 
         
@@ -159,20 +156,16 @@ class Combate{
     resolucion(turno){
         this.logBatalla+="TURNO "+turno+"\n";
         if(this.p1.speed>this.p2.speed){
-            //console.log("comienza p1")
             this.realizarAtaques(p1,p2);
         }else if(this.p2.speed>this.p1.speed){
-            //console.log("comienza p2")
             this.realizarAtaques(p2,p1);
         }else{
             //en caso de que tengan misma speed
             const primeroEnAtacar=Math.floor(Math.random*2)+1;
             if (primeroEnAtacar==1){
                 this.realizarAtaques(p1,p2);
-                //console.log("comienza p1")
             }else{
                 this.realizarAtaques(p2,p1);
-                //console.log("comienza p2")
             }
         }
         this.logBatalla+="\n"; 
@@ -191,21 +184,11 @@ class Combate{
         }
 }
 
-
-
-
-
-
 //creacion de personajes
 const p1= new Personaje("Erick");
 const p2= new Personaje("Jorge");
-
-//console.log(p1);
-//console.log(p2);
-
 //comienzo combate
 const combate=new Combate(p1,p2);
-
 combate.combatir();
 
 
