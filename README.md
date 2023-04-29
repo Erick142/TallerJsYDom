@@ -1,5 +1,6 @@
 Taller de especializacion tecnologica.
 
 INTEGRANTES:
-    ERICK MARTINEZ
-    JORGE CISTERNA
+
+ERICK MARTINEZ
+JORGE CISTERNA
